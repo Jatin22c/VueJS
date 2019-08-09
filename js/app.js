@@ -30,27 +30,27 @@ const User = {
 			<td>
 				{{ row.id }}
 			</td>
-			<td><a href="#" data-toggle="modal" data-target="#myModal" @click.prevent="toggleModal(row)">{{ row.name }}</a>
+			<td><span data-toggle="tooltip" data-placement="top" title="Name"><a data-toggle="modal" href="#myModal" @click.prevent="toggleModal(row)">{{ row.name }}</a></span>
 				<div></div>
 				<div class="small text-muted">
-				  <span>{{ row.username }}</span> | {{ row.email }}</div>
+				  <span data-toggle="tooltip" data-placement="bottom" title="Username">{{ row.username }}</span> | <span data-toggle="tooltip" data-placement="bottom" title="Email"><a :href="'mailto:' + row.email">{{ row.email }}</a></span></div>
 			</td>
 			<td>
-				<div>{{ row.address.street + ", " + row.address.suite }}</div>
+				<div><span data-toggle="tooltip" data-placement="top" title="Street Address">{{ row.address.street + ", " + row.address.suite }}</span></div>
 				<div class="small text-muted">
-				  <span>{{ row.address.city }}</span> | {{ row.address.zipcode }}</div>
+				  <span data-toggle="tooltip" data-placement="bottom" title="City">{{ row.address.city }}</span> | <span data-toggle="tooltip" data-placement="bottom" title="Zipcode">{{ row.address.zipcode }}</span></div>
 			</td>
 			<td>
-				<div>{{ row.phone }}</div>
+				<div><span data-toggle="tooltip" data-placement="top" title="Phone Number">{{ row.phone }}</span></div>
 			</td>
 			<td>
-				<div>{{ row.website }}</div>
+				<div><a data-toggle="tooltip" data-placement="top" title="Website" :href="'http://'+row.website" target="_blank">{{ row.website }}</a></div>
 			</td>
 			<td>
-				<div>{{ row.company.name }}</div>
-				<div class="small text-muted">{{ row.company.catchPhrase }}</div>
+				<div><span data-toggle="tooltip" data-placement="top" title="Company Name">{{ row.company.name }}</span></div>
+				<div class="small text-muted"><span data-toggle="tooltip" data-placement="bottom" title="Catch Phrase">{{ row.company.catchPhrase }}</span></div>
 			</td>
-        </tr>
+    </tr>
 	`,
 	props: ['row'],
 	methods: {
@@ -69,7 +69,7 @@ const UserModal = {
             <div class="modal-content">
               <div class="modal-header">
                 <h4 class="modal-title" id="myModalLabel">{{ modal.name }}'s Posts</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <a href="javascript:;" onclick="closeModal();" class="btn"><span aria-hidden="true">&times;</span></a>
                 
               </div>
               <div class="modal-body">
@@ -77,7 +77,7 @@ const UserModal = {
                   <user-posts :userid="modal.id" v-if="showPosts" :key="modal.id"></user-posts>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a href="js:;" onclick="closeModal();" class="btn">Close</a>
               </div>
             </div>
           </div>
@@ -103,14 +103,27 @@ const UserPosts = {
   template: `
     <div id="accordion">
       <div class="group" v-for="post,index in posts">
-        <h3 class="post-block"><a class="post-links" data-toggle="collapse" :href="'#collapse' + post.id" role="button" aria-expanded="false" aria-controls="collapseExample"><span class="post-no">Post #{{ index + 1 }}</span><p class="post-title">{{ post.title | capitalize }}</p></a></h3>
-        <div class="collapse card card-body" :id="'collapse' + post.id">
-          <p class="post-desc">{{ post.body | | capitalize}}</p>
+        <h3 class="post-block"><a class="post-links" data-toggle="modal" :href="'#myPost' + post.id" @click.prevent=""><span class="post-no">Post #{{ index + 1 }}</span><p class="post-title">{{ post.title | capitalize }}</p></a></h3>
+        <div class="modal fade" :id="'myPost' + post.id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog post-modal" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">{{ post.title | | capitalize }}</h4>
+                <a href="javascript:;" onclick="closePost();" class="btn"><span aria-hidden="true">&times;</span></a>  
+              </div>
+              <div class="modal-body" :key="post.id">
+                  <p class="post-desc">{{ post.body | | capitalize}}</p>
+              </div>
+              <div class="modal-footer">
+                <a href="js:;" onclick="closePost();" class="btn">Close</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   `,
-  props: ['userid','showPosts'],
+  props: ['userid', 'showPosts'],
   data(){
     return {
         postNo: 1,
@@ -129,6 +142,7 @@ Vue.component('users', Users);
 Vue.component('user', User);
 Vue.component('user-modal', UserModal);
 Vue.component('user-posts', UserPosts);
+//Vue.component('view-post', ViewPost);
 
 Vue.filter('capitalize', function (value) {
   if (!value) return ''

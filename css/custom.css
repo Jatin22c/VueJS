@@ -62,7 +62,13 @@
 	text-align: justify;
 }
 
+.author-name{
+	text-align: right;
+	font-weight: bold;
+	font-size: 14px;
+	font-style: italic;
+}
+
 .card .card-body .collapse{
 	border: 1px solid #204060;
 }
-
